@@ -1,3 +1,4 @@
+import os
 import sys
 
 from dotenv import load_dotenv
@@ -177,3 +178,24 @@ if __name__ == "__main__":
         model_provider=inputs.model_provider,
     )
     print_trading_output(result)
+
+    # Export results to JSON if --export flag is provided
+    if inputs.export_path:
+        export_data = {
+            "metadata": {
+                "tickers": tickers,
+                "start_date": inputs.start_date,
+                "end_date": inputs.end_date,
+                "model_name": inputs.model_name,
+                "model_provider": inputs.model_provider,
+                "analysts": inputs.selected_analysts,
+                "initial_cash": inputs.initial_cash,
+                "timestamp": datetime.now().isoformat(),
+            },
+            "decisions": result.get("decisions"),
+            "analyst_signals": result.get("analyst_signals"),
+        }
+        os.makedirs(os.path.dirname(inputs.export_path) or ".", exist_ok=True)
+        with open(inputs.export_path, "w") as f:
+            json.dump(export_data, f, indent=2, default=str)
+        print(f"\nResults exported to {inputs.export_path}")

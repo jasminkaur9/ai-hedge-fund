@@ -221,6 +221,7 @@ class CLIInputs:
     margin_requirement: float
     show_reasoning: bool = False
     show_agent_graph: bool = False
+    export_path: Optional[str] = None
     raw_args: Optional[argparse.Namespace] = None
 
 
@@ -260,6 +261,8 @@ def parse_cli_inputs(
     if include_graph_flag:
         parser.add_argument("--show-agent-graph", action="store_true", help="Show the agent graph")
 
+    parser.add_argument("--export", type=str, required=False, help="Export results to a JSON file (e.g., --export results.json)")
+
     args = parser.parse_args()
 
     # Normalize parsed values
@@ -282,6 +285,7 @@ def parse_cli_inputs(
         margin_requirement=getattr(args, "margin_requirement", 0.0),
         show_reasoning=getattr(args, "show_reasoning", False),
         show_agent_graph=getattr(args, "show_agent_graph", False),
+        export_path=getattr(args, "export", None),
         raw_args=args,
     )
 
